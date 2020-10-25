@@ -14,4 +14,3 @@ build/resources/main/templates/
 build/test-results/
 build/tmp/
 settings.gradle
-src/test/resources/
