@@ -2,15 +2,7 @@
 
 .gradle
 .idea
-
 application-oauth.properties
-build/classes/
-build/generated/
-build/libs/
-build/reports/
-build/resources/main/application.properties
-build/resources/main/static/
-build/resources/main/templates/
-build/test-results/
-build/tmp/
-settings.gradle
+
+build
+out
