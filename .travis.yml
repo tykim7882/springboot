@@ -42,6 +42,35 @@ deploy:
     local_dir: deploy # before_deploy에서 생성한 디렉토리 (해당위치의 파일들만 S3으로 전송)
     wait-until-deploy: true
 
+# 빌드 성공 후 s3버킷에 zip 파일이 있는지 확인
+# ==> Travis CI, S3 연동 완료
+
+# EC2에 IAM역할 연결 후 재부팅
+# EC2에 CodeDeploy 요청을 받을 수 있도록 에이전트 설치
+# aws s3 cp s3://aws-codedeploy-ap-northeast-2/latest/install . --region ap-northeast-2
+# chmod +x ./install
+# sudo ./install auto
+# sudo service codedeploy-agent status (agent 실행여부 확인)
+# IAM 역할 생성 AWSCodeDeployRole
+# AWS CodeDeploy 애플리케이션 생성
+
+# .travis.yml : Travis CI 빌드 -> S3에 zip파일 전송
+# appspec.yml : S3의 zip 파일을  EC2의 /home/ec2-user/app/step2/zip 경로로 복사하여 압축 푼다.
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # Travis repo settings에 설정된 값
+    secret_access_key: $AWS_SECRET_KEY # Travis repo settings에 설정된 값
+    bucket: sbtest-springboot2-build # S3 버킷
+    key: sbtest-springboot2-webservice.zip # 빌드 파일을 압축해서 전달
+    bundle_type: zip # 압축확장자
+    application: sbtest-springboot2-webservice # 웹 콘솔에서 등록한 CodeDeploy 어플리케이션
+    deployment_group: sbtest-springboot2-webservice-group # 웹 콘솔에서 등록한 CodeDeploy 배포 그룹
+    region: ap-northeast-2
+    wait-until-deployed: true
+
+# ==> Travis CI, S3, CodeDeploy 연동 완료
+
+
 # CI 실행 완료시 메일로 알람
 notifications:
   email:
