@@ -13,9 +13,17 @@ permissions:
     group: ec2-user
 
 # CodeDeploy 배포단계에서 실행할 명령어를 지정
-# ApplicationStart 단계에서 deploy.sh 를 ec2-user 권한으로 실행. 스크립트 실행 60초 이상 수행시 실패(시간제한 필요)
+# 스크립트 실행 60초 이상 수행시 실패(시간제한 필요)
 hooks:
+  AfterInstall:
+    - location: stop.sh  # 엔진엑스와 연결되어 있지 않은 스프링부트를 종료
+      timeout: 60
+      runas: ec2-user
   ApplicationStart:
-    - location: deploy.sh
+    - location: start.sh # 엔진엑스와 연결되어 있지 않은 port로 새 버전의 스프링부트 시작
+      timeout: 60
+      runas: ec2-user
+  ValidateService:
+    - location: health.sh # 새 스프링부트가 정상적으로 실행됐는지 확인
       timeout: 60
       runas: ec2-user
